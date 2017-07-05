@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from json_fm_gui import Ui_Dialog, openFileDialog, popupWindow
+from json_fm_gui import Ui_Dialog, openFDialog, popupWindow
 import json
  
 class json_ui_dialog(Ui_Dialog):
@@ -15,6 +15,10 @@ class json_ui_dialog(Ui_Dialog):
         self.open_file.clicked.connect(self.openFile)
         self.format_json.clicked.connect(self.formatJson)
         self.search.clicked.connect(self.searchJson)
+        self.sort_json.clicked.connect(self.sortJson)
+        self.key_key.returnPressed.connect(self.searchJson)
+        self.key_word.returnPressed.connect(self.searchJson)
+        self.path.setText('./fuck.json')
 
     def clear_all_text(self):
         self.key_key.setText('')
@@ -26,28 +30,25 @@ class json_ui_dialog(Ui_Dialog):
         if self.path.toPlainText() == '':
             pop = popupWindow("未选择文件")
             self.openFile()
-            return 1
-        elif self.key_word.toPlainText() == '':
+        elif self.key_word.displayText() == '':
             pop = popupWindow("未设定关键字")
-            return 1
-        output = list()
-        jsonH = jsonHandler()
-        jsonH.getJson(self.path.toPlainText())
-        jsonH.getKey(jsonH.json, self.key_word.toPlainText())
-        if self.key_key.toPlainText() == '':
-            for chain in jsonH.allList:
-                output.append(" => ".join(chain))
         else:
-            for chain in jsonH.allList:
-                if chain[-2] == self.key_key.toPlainText():
+            output = list()
+            jsonH = jsonHandler()
+            jsonH.getJson(self.path.toPlainText())
+            jsonH.getKey(jsonH.json, self.key_word.displayText())
+            if self.key_key.displayText() == '':
+                for chain in jsonH.allList:
                     output.append(" => ".join(chain))
-        self.show_json.setText("\n".join(output))
+            else:
+                for chain in jsonH.allList:
+                    if chain[-2] == self.key_key.displayText():
+                        output.append(" => ".join(chain))
 
+            self.sort_json.setDisabled(False)
+            self.show_json.setText("\n".join(output))
 
-    def openFile(self):
-        openFileHandler = openFileDialog()
-        if hasattr(openFileHandler, 'fileName'):
-            self.path.setText(openFileHandler.fileName)
+            return 0
 
     def formatJson(self):
         jsonH = jsonHandler()
@@ -55,6 +56,24 @@ class json_ui_dialog(Ui_Dialog):
         jsonH.formatJson()
         ret = jsonH.formatedJson
         self.show_json.setText(ret)
+
+        return 0
+
+    def openFile(self):
+        openFileHandler = openFDialog(self.path.toPlainText())
+        if hasattr(openFileHandler, 'fileName'):
+            self.path.setText(openFileHandler.fileName)
+
+        return 0
+
+    def sortJson(self):
+        text = self.show_json.toPlainText()
+        text_list = text.split('\n')
+        text_list.sort(key=len)
+        self.show_json.setText("\n".join(text_list))
+        self.sort_json.setDisabled(True)
+
+        return 0
 
  
 class jsonHandler(object):

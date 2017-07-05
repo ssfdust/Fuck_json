@@ -31,10 +31,10 @@ class Ui_Dialog(object):
         self.path.setObjectName("path")
         self.open_file = QtWidgets.QPushButton(Dialog)
         self.open_file.setGeometry(QtCore.QRect(310, 30, 92, 30))
+        self.open_file.setAutoDefault(False)
         self.open_file.setObjectName("open_file")
-        self.key_word = QtWidgets.QTextEdit(Dialog)
+        self.key_word = QtWidgets.QLineEdit(Dialog)
         self.key_word.setGeometry(QtCore.QRect(480, 30, 271, 31))
-        self.key_word.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.key_word.setObjectName("key_word")
         self.show_json = QtWidgets.QTextBrowser(Dialog)
         self.show_json.setGeometry(QtCore.QRect(50, 140, 701, 301))
@@ -42,21 +42,28 @@ class Ui_Dialog(object):
         self.label_3 = QtWidgets.QLabel(Dialog)
         self.label_3.setGeometry(QtCore.QRect(390, 70, 91, 31))
         self.label_3.setObjectName("label_3")
-        self.key_key = QtWidgets.QTextEdit(Dialog)
+        self.key_key = QtWidgets.QLineEdit(Dialog)
         self.key_key.setGeometry(QtCore.QRect(480, 70, 271, 31))
-        self.key_key.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.key_key.setObjectName("key_key")
+        self.sort_json = QtWidgets.QPushButton(Dialog)
+        self.sort_json.setGeometry(QtCore.QRect(209, 470, 92, 30))
+        self.sort_json.setAutoDefault(False)
+        self.sort_json.setObjectName("sort_json")
+        self.sort_json.setDisabled(True)
         self.format_json = QtWidgets.QPushButton(Dialog)
-        self.format_json.setGeometry(QtCore.QRect(370, 470, 92, 30))
+        self.format_json.setGeometry(QtCore.QRect(359, 470, 92, 30))
+        self.format_json.setAutoDefault(False)
         self.format_json.setObjectName("format_json")
         self.search = QtWidgets.QPushButton(Dialog)
-        self.search.setGeometry(QtCore.QRect(500, 470, 92, 30))
+        self.search.setGeometry(QtCore.QRect(509, 470, 92, 30))
+        self.search.setAutoDefault(False)
         self.search.setObjectName("search")
         self.clear = QtWidgets.QPushButton(Dialog)
-        self.clear.setGeometry(QtCore.QRect(640, 470, 92, 30))
+        self.clear.setGeometry(QtCore.QRect(659, 470, 92, 30))
+        self.clear.setAutoDefault(False)
         self.clear.setObjectName("clear")
         self.label_4 = QtWidgets.QLabel(Dialog)
-        self.label_4.setGeometry(QtCore.QRect(110, 110, 63, 20))
+        self.label_4.setGeometry(QtCore.QRect(10, 140, 63, 20))
         self.label_4.setObjectName("label_4")
 
         self.retranslateUi(Dialog)
@@ -69,21 +76,23 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "关键字："))
         self.open_file.setText(_translate("Dialog", "打开"))
         self.label_3.setText(_translate("Dialog", "(可选)关键键："))
+        self.sort_json.setText(_translate("Dialog", "json排序"))
         self.format_json.setText(_translate("Dialog", "json格式化"))
         self.search.setText(_translate("Dialog", "寻找路径"))
         self.clear.setText(_translate("Dialog", "清空"))
         self.label_4.setText(_translate("Dialog", "展示："))
 
  
-class openFileDialog(QWidget):
+class openFDialog(QWidget):
  
-    def __init__(self):
+    def __init__(self, filename=None):
         super().__init__()
         self.title = '打开json'
         self.left = 10
         self.top = 10
         self.width = 640
         self.height = 480
+        self._filename = filename
         self.initUI()
  
     def initUI(self):
@@ -97,10 +106,10 @@ class openFileDialog(QWidget):
     def openFileNameDialog(self):    
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","JSON Files (*.json);;All files (*)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, self.title, "","JSON Files (*.json);;All files (*)", options=options)
         if fileName:
             self.fileName = fileName
-        else:
+        elif self._filename == '' or self._filename == None:
             pop = popupWindow("未选择文件")
 
 class popupWindow(QWidget):
@@ -122,3 +131,4 @@ class popupWindow(QWidget):
         buttonReply = QMessageBox.question(self, '提示', self._message, QMessageBox.Yes)
  
         self.show()
+
